@@ -1,0 +1,30 @@
+{
+  "name": "process-observe",
+  "version": "0.1.0-alpha",
+  "description": "Make processes observable.",
+  "main": "index.js",
+  "scripts": {
+    "test": "tape 'test/**/*.spec.js'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eljefedelrodeodeljefe/process-observe.git"
+  },
+  "keywords": [
+    "concurrency"
+  ],
+  "author": "Robert Jefe Lindstaedt <robert.lindstaedt@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/eljefedelrodeodeljefe/process-observe/issues"
+  },
+  "homepage": "https://github.com/eljefedelrodeodeljefe/process-observe#readme",
+  "devDependencies": {
+    "standard": "^7.1.0",
+    "tape": "^4.5.1"
+  },
+  "dependencies": {
+    "bindings": "^1.2.1",
+    "nan": "^2.3.3"
+  }
+}
