@@ -1,1 +1,1 @@
-module.exports = require('./lib/libco')
+module.exports = require('./lib/observe')

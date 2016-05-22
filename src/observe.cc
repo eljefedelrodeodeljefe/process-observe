@@ -1,30 +1,121 @@
 #include <nan.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/sysctl.h>
+#include <unistd.h>
 
 
-void Add(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+extern "C" {
 
-  if (info.Length() < 2) {
-    Nan::ThrowTypeError("Wrong number of arguments");
-    return;
+int process_children(pid_t ppid, uint32_t** proc_list, int* proc_count) {
+  uint32_t* temp = NULL;
+
+#if defined(__APPLE__)
+    // defined(__NetBSD__)   || \
+    // defined(__OpenBSD__)  || \
+    // defined(__FreeBSD__)  || \
+    // defined(__DragonFly__)
+  struct kinfo_proc *p_list = NULL;
+  int ret, p_count, i;
+  size_t len = 0;
+  /* ref:
+     http://unix.superglobalmegacorp.com/Net2/newsrc/sys/kinfo_proc.h.html */
+  static const int name[] = { CTL_KERN, KERN_PROC, KERN_PROC_ALL, 0 };
+
+  *proc_list = NULL;
+  *proc_count = 0;
+  /* get number of total processes for subsequent calls */
+  ret = sysctl((int *)name, (sizeof(name) / sizeof(*name)) - 1, NULL, &len, NULL, 0);
+  if (ret) return 1;
+
+  p_list = (struct kinfo_proc*)malloc(len);
+  if (!p_list) return 1;
+  /* get the process list */
+  ret = sysctl((int *)name, (sizeof(name) / sizeof(*name)) - 1, p_list, &len, NULL, 0);
+  if (ret) {
+    free(p_list);
+    return 1;
   }
 
-  if (!info[0]->IsNumber() || !info[1]->IsNumber()) {
-    Nan::ThrowTypeError("Wrong arguments");
-    return;
+
+  p_count = len / sizeof(struct kinfo_proc);
+  /* iterate though whole p_list */
+  for (i = 0; i < p_count; i++) {
+   /* if parent is ppid, push pid to array; increase counter */
+   if ((uint32_t) p_list[i].kp_eproc.e_ppid == (uint32_t) ppid) {
+     temp = (uint32_t*)realloc(temp, (*proc_count + 1) * sizeof(uint32_t));
+     if (temp == NULL) {
+       free(p_list);
+       return -ENOMEM;
+     }
+     temp[*proc_count] = (uint32_t)p_list[i].kp_proc.p_pid;
+
+     (*proc_count)++;
+   }
+  }
+  free(p_list);
+
+#elif defined(__linux__)
+  char proc_p[256] = {0};
+  int *fp;
+  int match_pid;
+
+  *proc_list = NULL;
+  *proc_count = 0;
+  /* Rationale: children are defined in thread with sames ID of process -> read,
+   * check line endings, count, build array, return */
+  sprintf(proc_p, "/proc/%u/task/%u/children", ppid, ppid);
+  fp = fopen(proc_p,"r");
+  if (fp == NULL)
+    return 127;
+
+  while (fscanf(fp, "%d", &match_pid) > 0) {
+     temp = (uint32_t*)realloc(temp, (*proc_count + 1) * sizeof(uint32_t));
+     if (temp == NULL) {
+       uv__close(fp);
+       return -ENOMEM;
+     }
+     temp[*proc_count] = (uint32_t) match_pid;
+     (*proc_count)++;
+  }
+  uv__close(fp);
+#endif
+
+  *proc_list = temp;
+  free(temp);
+  return 0;
+}
+
+}
+
+
+void GetChildren(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  v8::Local<v8::Object> obj = Nan::New<v8::Object>();
+  double pid = info[0]->NumberValue();
+
+  int pcount;
+  uint32_t* plist;
+  int err = process_children(pid, &plist, &pcount);
+  if (err) {
+    Nan::ThrowError("Error excuting getting children");
   }
 
-  double arg0 = info[0]->NumberValue();
-  double arg1 = info[1]->NumberValue();
-  v8::Local<v8::Number> num = Nan::New(arg0 + arg1);
+  v8::Local<v8::Number> process_count = Nan::New(pcount);
+  v8::Local<v8::Array> process_arr = Nan::New<v8::Array>(pcount);
 
-  info.GetReturnValue().Set(num);
+  for (size_t i = 0; i < (size_t)pcount; i++) {
+    process_arr->Set(i, Nan::New<v8::Number>(plist[i]));
+  }
+
+  obj->Set(Nan::New("pids").ToLocalChecked(), process_arr);
+  obj->Set(Nan::New("count").ToLocalChecked(), process_count);
+
+  info.GetReturnValue().Set(obj);
 }
 
 void Init(v8::Local<v8::Object> exports) {
-  exports->Set(Nan::New("add").ToLocalChecked(),
-               Nan::New<v8::FunctionTemplate>(Add)->GetFunction());
+  exports->Set(Nan::New("children").ToLocalChecked(),
+               Nan::New<v8::FunctionTemplate>(GetChildren)->GetFunction());
 }
 
 NODE_MODULE(addon, Init)
