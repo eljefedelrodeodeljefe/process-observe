@@ -72,13 +72,13 @@ int process_children(pid_t ppid, uint32_t** proc_list, int* proc_count) {
   while (fscanf(fp, "%d", &match_pid) > 0) {
      temp = (uint32_t*)realloc(temp, (*proc_count + 1) * sizeof(uint32_t));
      if (temp == NULL) {
-       uv__close(fp);
+       close(fp);
        return -ENOMEM;
      }
      temp[*proc_count] = (uint32_t) match_pid;
      (*proc_count)++;
   }
-  uv__close(fp);
+  close(fp);
 #endif
 
   *proc_list = temp;
