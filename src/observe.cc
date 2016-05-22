@@ -110,7 +110,6 @@ void GetChildren(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   obj->Set(Nan::New("pids").ToLocalChecked(), process_arr);
   obj->Set(Nan::New("count").ToLocalChecked(), process_count);
 
-  free(plist);
   info.GetReturnValue().Set(obj);
 }
 
