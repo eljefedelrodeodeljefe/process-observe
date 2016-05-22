@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <sys/sysctl.h>
 #include <unistd.h>
+#include <inttypes.h>
 
 
 extern "C" {
@@ -11,10 +12,6 @@ int process_children(pid_t ppid, uint32_t** proc_list, int* proc_count) {
   uint32_t* temp = NULL;
 
 #if defined(__APPLE__)
-    // defined(__NetBSD__)   || \
-    // defined(__OpenBSD__)  || \
-    // defined(__FreeBSD__)  || \
-    // defined(__DragonFly__)
   struct kinfo_proc *p_list = NULL;
   int ret, p_count, i;
   size_t len = 0;
@@ -54,35 +51,38 @@ int process_children(pid_t ppid, uint32_t** proc_list, int* proc_count) {
    }
   }
   free(p_list);
+  *proc_list = temp;
+  free(temp);
 
 #elif defined(__linux__)
   char proc_p[256] = {0};
-  int *fp;
+  FILE *fp = NULL;
   int match_pid;
+  int count = 0;
 
   *proc_list = NULL;
   *proc_count = 0;
   /* Rationale: children are defined in thread with sames ID of process -> read,
    * check line endings, count, build array, return */
   sprintf(proc_p, "/proc/%u/task/%u/children", ppid, ppid);
-  fp = fopen(proc_p,"r");
+  fp = fopen(proc_p, "r");
   if (fp == NULL)
     return 127;
 
   while (fscanf(fp, "%d", &match_pid) > 0) {
      temp = (uint32_t*)realloc(temp, (*proc_count + 1) * sizeof(uint32_t));
      if (temp == NULL) {
-       close(fp);
+       fclose(fp);
        return -ENOMEM;
      }
      temp[*proc_count] = (uint32_t) match_pid;
      (*proc_count)++;
+     count++;
   }
-  close(fp);
+  fclose(fp);
+  *proc_list = temp;
 #endif
 
-  *proc_list = temp;
-  free(temp);
   return 0;
 }
 
@@ -110,6 +110,7 @@ void GetChildren(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   obj->Set(Nan::New("pids").ToLocalChecked(), process_arr);
   obj->Set(Nan::New("count").ToLocalChecked(), process_count);
 
+  free(plist);
   info.GetReturnValue().Set(obj);
 }
 

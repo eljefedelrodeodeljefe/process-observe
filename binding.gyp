@@ -10,7 +10,12 @@
 
       ],
       "conditions": [
-              [ # cflags on OS X are stupid and have to be defined like this
+        [ "OS==\"linux\" or OS==\"freebsd\" or OS==\"openbsd\" or OS==\"solaris\" or OS==\"aix\"", {
+            "cflags": [
+            #   "-Wall"
+            ]
+        }],
+        [ # cflags on OS X are stupid and have to be defined like this
           "OS==\"mac\"", {
             "xcode_settings": {
             "OTHER_CFLAGS": [
