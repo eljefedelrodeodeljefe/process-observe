@@ -4,7 +4,7 @@ Native bindings to observation APIs like `sysctl` (BSDs), `proc/{pid}/` (Linux) 
 
 [![Build Status](https://travis-ci.org/eljefedelrodeodeljefe/process-observe.svg?branch=master)](https://travis-ci.org/eljefedelrodeodeljefe/process-observe) [![Build status](https://ci.appveyor.com/api/projects/status/59q34ua3i457k27x?svg=true)](https://ci.appveyor.com/project/eljefederodeodeljefe/process-observe) [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/) [![Join the chat at https://gitter.im/eljefedelrodeodeljefe/process-observe](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/eljefedelrodeodeljefe/process-observe?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-[![NPM](https://nodei.co/npm-dl/cpython.png?months=6&height=2)](https://nodei.co/npm/cpython/)
+[![NPM](https://nodei.co/npm-dl/process-observe.png?months=6&height=2)](https://nodei.co/npm/process-observe/)
 
 ## TL;DR
 
