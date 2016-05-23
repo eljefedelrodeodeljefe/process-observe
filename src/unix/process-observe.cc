@@ -92,4 +92,21 @@ int process_children(pid_t ppid, uint32_t** proc_list, int* proc_count) {
   return 0;
 }
 
+
+int process_info(pid_t pid, p_obsrv_info_t* data) {
+  int pcount;
+  uint32_t* plist;
+
+  data->pid = pid;
+  data->ppid = getppid();
+
+  int err = process_children(pid, &plist, &pcount);
+  if (err) {
+    return 1;
+  }
+  data->children = plist;
+  data->children_count = (uint32_t)pcount;
+  return 0;
+}
+
 #endif

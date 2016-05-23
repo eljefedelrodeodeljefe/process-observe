@@ -1,6 +1,6 @@
 # process-observe
 
-Native bindings to observation APIs like `sysctl` (**BSDs**), `proc/{pid}/` (**Linux**) and Windows equivalents in the context of process observation.
+Native bindings to observation APIs like `sysctl` (BSDs), `proc/{pid}/` (Linux) and Windows equivalents in the context of process observation.
 
 [![Build Status](https://travis-ci.org/eljefedelrodeodeljefe/process-observe.svg?branch=master)](https://travis-ci.org/eljefedelrodeodeljefe/process-observe) [![Build status](https://ci.appveyor.com/api/projects/status/59q34ua3i457k27x?svg=true)](https://ci.appveyor.com/project/eljefederodeodeljefe/process-observe) [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/) [![Join the chat at https://gitter.im/eljefedelrodeodeljefe/process-observe](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/eljefedelrodeodeljefe/process-observe?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -57,6 +57,11 @@ Please see [list of the implemented methods](#status) for now.
 
 ## ProcessObserve
 **Kind**: global class  
+
+* [ProcessObserve](#ProcessObserve)
+    * [.children(pid, [cb])](#ProcessObserve+children) ⇒ <code>Object</code>
+    * [.info(pid, [cb])](#ProcessObserve+info) ⇒ <code>Object</code>
+
 <a name="ProcessObserve+children"></a>
 
 ### processObserve.children(pid, [cb]) ⇒ <code>Object</code>
@@ -85,6 +90,36 @@ observe.children(process.pid, (err, result) => {
 		console.log(err)
 	console.log(result)
 	// -> {pids: [5841], count: 1}
+})
+```
+<a name="ProcessObserve+info"></a>
+
+### processObserve.info(pid, [cb]) ⇒ <code>Object</code>
+Query a process associated with a specified `pid` a wider process specific data
+such as a its parent, children, hardware usage etc. (see list TBD)
+
+**Kind**: instance method of <code>[ProcessObserve](#ProcessObserve)</code>  
+**Returns**: <code>Object</code> - returns an object with process specific data  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| pid | <code>Number</code> | `pid` to query |
+| [cb] | <code>function</code> | optional callback. If provided sync function will be called on next tick. |
+
+**Example**  
+```js
+const observe = require('process-observer')
+const currenProcess = process.pid
+// sync
+observe.info(currenProcess)
+// -> { pid: 3804, parent_pid: 3803, children_count: 1, children: [ 3805 ]}
+
+// async
+observe.info(currenProcess, (err, result) => {
+	if (err)
+		console.log(err)
+	console.log(result)
+	// -> {pid: 3804, parent_pid: 3803, children_count: 1, children: [ 3805 ]}
 })
 ```
 ## License

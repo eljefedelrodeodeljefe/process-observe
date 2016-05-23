@@ -22,3 +22,12 @@ test('Children: After fork process has a children of a(!) discrete PID', (t) => 
   n.send(process.pid)
 
 })
+
+test('Info: get an object of infos', (t) => {
+  t.plan(4)
+  const data = oberserve.info(process.pid)
+  t.ok(data.pid, 'has pid result')
+  t.ok(data.parent_pid, 'has ppid result')
+  t.ok(data.children_count, 'has children_count result')
+  t.ok(data.children, 'has children array result')
+})
