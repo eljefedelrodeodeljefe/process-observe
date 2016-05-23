@@ -2,7 +2,10 @@
   "targets": [
     {
       "target_name": "addon",
-      "sources": [ "src/observe.cc" ],
+      "sources": [
+        "src/observe.cc",
+        "src/process-observe.cc"
+        ],
       "include_dirs": [
         "<!(node -e \"require('nan')\")",
       ],
