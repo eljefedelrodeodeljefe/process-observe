@@ -24,7 +24,7 @@ observe.children(process.pid, (err, result) => {
 ## Implementation Status<a name="status"></a>
 | Method | implemented |
 | --- | --- |
-| .info(pid [, cb]) | - |
+| .info(pid [, cb]) | **yes** |
 | .children(pid [, cb]) | **yes** |
 
 
