@@ -1,6 +1,6 @@
 {
   "name": "process-observe",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Make processes observable.",
   "main": "index.js",
   "scripts": {
