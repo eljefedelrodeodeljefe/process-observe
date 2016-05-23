@@ -1,5 +1,6 @@
 #include "../process-observe.h"
 #if defined(__APPLE__)    || \
+    defined(__linux__)    || \
     defined(__NetBSD__)   || \
     defined(__OpenBSD__)  || \
     defined(__FreeBSD__)  || \
