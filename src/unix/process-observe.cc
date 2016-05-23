@@ -1,4 +1,9 @@
-#include "process-observe.h"
+#include "../process-observe.h"
+#if defined(__APPLE__)    || \
+    defined(__NetBSD__)   || \
+    defined(__OpenBSD__)  || \
+    defined(__FreeBSD__)  || \
+    defined(__DragonFly__)
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -85,3 +90,5 @@ int process_children(pid_t ppid, uint32_t** proc_list, int* proc_count) {
 
   return 0;
 }
+
+#endif

@@ -4,7 +4,8 @@
       "target_name": "addon",
       "sources": [
         "src/observe.cc",
-        "src/process-observe.cc"
+        "src/unix/process-observe.cc",
+        "src/win/process-observe.cc"
         ],
       "include_dirs": [
         "<!(node -e \"require('nan')\")",
