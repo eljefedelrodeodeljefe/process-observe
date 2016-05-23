@@ -86,10 +86,10 @@ observe.children(0)
 // inspect your current process (here assuming that you have just spawned
 // a new process), here with async API
 observe.children(process.pid, (err, result) => {
-	if (err)
-		console.log(err)
-	console.log(result)
-	// -> {pids: [5841], count: 1}
+  if (err)
+    console.log(err)
+  console.log(result)
+  // -> {pids: [5841], count: 1}
 })
 ```
 <a name="ProcessObserve+info"></a>
@@ -116,10 +116,10 @@ observe.info(currenProcess)
 
 // async
 observe.info(currenProcess, (err, result) => {
-	if (err)
-		console.log(err)
-	console.log(result)
-	// -> {pid: 3804, parent_pid: 3803, children_count: 1, children: [ 3805 ]}
+  if (err)
+    console.log(err)
+  console.log(result)
+   // -> {pid: 3804, parent_pid: 3803, children_count: 1, children: [ 3805 ]}
 })
 ```
 ## License
